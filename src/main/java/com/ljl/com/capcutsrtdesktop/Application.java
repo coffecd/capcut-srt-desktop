@@ -1,6 +1,8 @@
 package com.ljl.com.capcutsrtdesktop;
 
 import com.ljl.com.capcutsrtdesktop.config.AppConfig;
+import com.ljl.com.capcutsrtdesktop.config.WindowsAppConfig;
+import com.ljl.com.capcutsrtdesktop.utils.FileUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,12 +10,14 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class Application extends javafx.application.Application
 {
     double x, y = 0;
     Stage stage;
+
     @Override
     public void start(Stage stage) throws IOException
     {
@@ -50,21 +54,29 @@ public class Application extends javafx.application.Application
     public void init() throws Exception
     {
 
-        String userHome = System.getProperty("user.home");
-        System.out.println("当前用户的目录："+userHome);
-
         AppConfig.getInstance().loadPropertiesFile();
-//        FileLoaUtils.getInstance().creatFile(AppConfig.getInstance().getXmlPath());
-//        //初始化配置文件 不存在则创建
-//        FileUtils.checkCreatFile(AppConfig.getInstance().getPath());
-//        //加载配置
-//        CustomizedConfig.getInstance().parseProperties();
-//        //解析配置
-//        ExcelConfigManager.loadExcelConfig();
+
+        String windowsConfigFilePath = AppConfig.getInstance().getWindowsConfigFilePath();
+        System.out.println("windowsConfigPath:" + windowsConfigFilePath);
+        //配置文件夹是否存在 不存在则创建
+        FileUtils.createDirectoryIfNotExists(windowsConfigFilePath);
+        String windowsConfigPath = AppConfig.getInstance().getWindowsConfigPath();
+        //判断配置文件是否存在 不存在则生成一份模版
+        if (!FileUtils.fileExists(windowsConfigPath))
+        {
+            WindowsAppConfig.getInstance().init(windowsConfigPath);
+        }
+        WindowsAppConfig.getInstance().loadPropertiesFile(windowsConfigPath);
+
+
+
+
     }
 
     public static void main(String[] args)
     {
         launch();
     }
+
+
 }

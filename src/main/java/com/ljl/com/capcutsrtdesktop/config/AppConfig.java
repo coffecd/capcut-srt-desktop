@@ -1,5 +1,6 @@
 package com.ljl.com.capcutsrtdesktop.config;
 
+import com.ljl.com.capcutsrtdesktop.utils.FileUtils;
 import lombok.Data;
 
 import java.io.IOException;
@@ -65,4 +66,23 @@ public class AppConfig
         }
 
     }
+
+    /**
+     * 获取windows配置文件夹路径
+     */
+    public String getWindowsConfigFilePath()
+    {
+        return FileUtils.getUserPublic()+"/"+appDataPath;
+    }
+
+    /**
+     *获取windows配置文件的config路径
+     * @return
+     */
+    public String getWindowsConfigPath()
+    {
+        return FileUtils.getUserPublic() +appDataPath+configName;
+    }
+
+
 }

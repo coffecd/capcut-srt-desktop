@@ -19,11 +19,13 @@ import java.util.stream.Collectors;
 public class JsonToStr
 {
 
+    private final static String jsonName = "draft_content.json";
 
     public static void main(String[] args) throws IOException
     {
-//        String draftFileName = "draft_content.json";
+
         String draftFileName = "C:\\Users\\0\\Desktop\\draft_content.json";
+        String uptFile = "D:\\";
 //        String os = System.getProperty("os.name");
 //        switch (os)
 //        {
@@ -37,84 +39,100 @@ public class JsonToStr
 //                draftFileName = "draft_info.json";
 //        }
         System.out.println("file: " + draftFileName);
-        String data = new String(Files.readAllBytes(Paths.get(draftFileName)));
-        JSONObject jsonData = JSON.parseObject(data);
-        JSONArray materials = jsonData.getJSONArray("materials");
-        JSONArray tracks = jsonData.getJSONArray("tracks");
-        int subTrackNumber = 1;
-        JSONArray subTiming = tracks.getJSONObject(subTrackNumber).getJSONArray("segments");
-        JSONArray subtitlesInfo = new JSONArray();
+        generateStr(draftFileName, uptFile);
+    }
 
-        for (Object item : materials)
+    /**
+     * 生成str
+     *
+     * @param draftFile  capcut的json文件路径
+     * @param outPutFile 输出的文件夹路径
+     * @throws IOException
+     */
+    public static void generateStr(String draftFile, String outPutFile)
+    {
+        try
         {
-            JSONObject i = (JSONObject) item;
+            String draftFileName = draftFile+"/" + jsonName;
+            String data = new String(Files.readAllBytes(Paths.get(draftFileName)));
+            JSONObject jsonData = JSON.parseObject(data);
+            JSONArray materials = jsonData.getJSONArray("materials");
+            JSONArray tracks = jsonData.getJSONArray("tracks");
+            int subTrackNumber = 1;
+            JSONArray subTiming = tracks.getJSONObject(subTrackNumber).getJSONArray("segments");
+            JSONArray subtitlesInfo = new JSONArray();
 
-            JSONArray texts =  i.getJSONArray("texts");
-
-
-            for (Object text : texts)
+            for (Object item : materials)
             {
-                JSONObject itx = (JSONObject) text;
-                String content = itx.getString("content")
-                        .replaceAll("<.*?>", "")
-                        .replaceAll("\\[|\\]", "");
-                try
+                JSONObject i = (JSONObject) item;
+
+                JSONArray texts = i.getJSONArray("texts");
+
+
+                for (Object text : texts)
                 {
-                    JSONObject contentV3 = JSON.parseObject(itx.getString("content"));
-                    if (contentV3 != null)
+                    JSONObject itx = (JSONObject) text;
+                    String content = itx.getString("content")
+                            .replaceAll("<.*?>", "")
+                            .replaceAll("\\[|\\]", "");
+                    try
                     {
-                        content = contentV3.getString("text");
+                        JSONObject contentV3 = JSON.parseObject(itx.getString("content"));
+                        if (contentV3 != null)
+                        {
+                            content = contentV3.getString("text");
+                        }
+                    } catch (Exception error)
+                    {
                     }
-                } catch (Exception error)
-                {
+                    JSONObject subtitle = new JSONObject();
+                    subtitle.put("content", content);
+                    subtitle.put("id", itx.getString("id"));
+                    subtitlesInfo.add(subtitle);
                 }
-                JSONObject subtitle = new JSONObject();
-                subtitle.put("content", content);
-                subtitle.put("id", itx.getString("id"));
-                subtitlesInfo.add(subtitle);
+
             }
 
-        }
-
-        for (int i = 0; i < subtitlesInfo.size(); i++)
-        {
-            JSONObject s = subtitlesInfo.getJSONObject(i);
-            JSONObject segment = findSegment(subTiming, s.getString("id"));
-
-            while (segment == null)
+            for (int i = 0; i < subtitlesInfo.size(); i++)
             {
-                subTrackNumber++;
-                subTiming = tracks.getJSONObject(subTrackNumber).getJSONArray("segments");
-                segment = findSegment(subTiming, s.getString("id"));
+                JSONObject s = subtitlesInfo.getJSONObject(i);
+                JSONObject segment = findSegment(subTiming, s.getString("id"));
+
+                while (segment == null)
+                {
+                    subTrackNumber++;
+                    subTiming = tracks.getJSONObject(subTrackNumber).getJSONArray("segments");
+                    segment = findSegment(subTiming, s.getString("id"));
+                }
+                s.put("start", segment.getJSONObject("target_timerange").getLong("start"));
+                s.put("end", s.getLong("start") + segment.getJSONObject("target_timerange").getLong("duration"));
+                s.put("srtStart", msToSrt(s.getLong("start")));
+                s.put("srtEnd", msToSrt(s.getLong("end")));
+                s.put("subNumber", i + 1);
+                s.put("srtTiming", s.getString("srtStart") + " --> " + s.getString("srtEnd"));
             }
-            s.put("start", segment.getJSONObject("target_timerange").getLong("start"));
-            s.put("end", s.getLong("start") + segment.getJSONObject("target_timerange").getLong("duration"));
-            s.put("srtStart", msToSrt(s.getLong("start")));
-            s.put("srtEnd", msToSrt(s.getLong("end")));
-            s.put("subNumber", i + 1);
-            s.put("srtTiming", s.getString("srtStart") + " --> " + s.getString("srtEnd"));
+
+
+            String srtOut = subtitlesInfo.stream()
+                    .map(s ->
+                    {
+                        JSONObject sub = (JSONObject) s;
+                        return String.format("%d\n%s\n%s\n\n", sub.getIntValue("subNumber"), sub.getString("srtTiming"), sub.getString("content"));
+                    })
+                    .collect(Collectors.joining());
+            String copyOut = subtitlesInfo.stream()
+                    .map(s -> ((JSONObject) s).getString("content") + "\n")
+                    .collect(Collectors.joining());
+
+
+            writeToFile(srtOut, outPutFile + "/" + "subtitles.srt");
+            System.out.println("Run \"java MainApp --txt\" to get a copy version of the subtitles, courtesy of @dellucanil");
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
 
-        String srtOut = subtitlesInfo.stream()
-                .map(s -> {
-                    JSONObject sub = (JSONObject) s;
-                    return String.format("%d\n%s\n%s\n\n", sub.getIntValue("subNumber"), sub.getString("srtTiming"), sub.getString("content"));
-                })
-                .collect(Collectors.joining());
-        String copyOut = subtitlesInfo.stream()
-                .map(s -> ((JSONObject) s).getString("content") + "\n")
-                .collect(Collectors.joining());
-
-        if (args.length > 0 && args[0].equals("--txt"))
-        {
-            System.out.println("Copy extraction is a courtesy of @dellucanil");
-            writeToFile(copyOut, "copy.txt");
-        } else
-        {
-            writeToFile(srtOut, "subtitles.srt");
-            System.out.println("Run \"java Main --txt\" to get a copy version of the subtitles, courtesy of @dellucanil");
-        }
     }
 
     private static JSONObject findSegment(JSONArray subTiming, String id)

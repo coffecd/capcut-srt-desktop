@@ -1,5 +1,6 @@
 package com.ljl.com.capcutsrtdesktop.config;
 
+import com.ljl.com.capcutsrtdesktop.utils.FileUtils;
 import lombok.Data;
 
 import java.io.FileInputStream;
@@ -25,10 +26,29 @@ public class WindowsAppConfig
      * str 输出地址  如果用户没有指定的话  放在lveditorDraftFilePath 路径下
      */
     private String outPutFilePath;
+    /**
+     * 生成完成是否打开文件夹
+     */
+    private boolean isOpen;
 
     private WindowsAppConfig()
     {
 
+    }
+
+    /**
+     * 初始化windows系统的默认配置
+     *
+     * @param path
+     */
+    public void init(String path)
+    {
+        Properties prop = new Properties();
+        String userHome = FileUtils.getUserHome();
+
+        prop.setProperty("lveditorDraftFilePath", userHome + "/AppData/Local/CapCut/User Data/Projects/com.lveditor.draft/");
+        prop.setProperty("outPutFilePath", userHome + "/AppData/Local/CapCut/User Data/Projects/com.lveditor.draft/");
+        FileUtils.writePropertiesToFile(prop, path);
     }
 
     private static class Holder
@@ -56,11 +76,62 @@ public class WindowsAppConfig
             properties.load(new InputStreamReader(in, "UTF-8"));
             lveditorDraftFilePath = properties.getProperty("lveditorDraftFilePath");
             outPutFilePath = properties.getProperty("outPutFilePath");
+            String open = properties.getProperty("isOpen");
+            if (open != null && open.equals("true"))
+            {
+                isOpen = true;
+            }
         } catch (Exception e)
         {
-            e.printStackTrace();""
+            e.printStackTrace();
         }
 
     }
 
+    public void setLveditorDraftFilePath(String lveditorDraftFilePath)
+    {
+        this.lveditorDraftFilePath = lveditorDraftFilePath;
+        updatePropertiesFile();
+    }
+
+    public void setOutPutFilePath(String outPutFilePath)
+    {
+        this.outPutFilePath = outPutFilePath;
+        updatePropertiesFile();
+    }
+
+    public void setOpen(boolean open)
+    {
+        isOpen = open;
+        updatePropertiesFile();
+    }
+
+    /**
+     * 更新配置文件
+     */
+    public void updatePropertiesFile()
+    {
+        String windowsConfigPath = AppConfig.getInstance().getWindowsConfigPath();
+        //判断配置文件是否存在 不存在则生成一份模版
+        if (!FileUtils.fileExists(windowsConfigPath))
+        {
+            WindowsAppConfig.getInstance().init(windowsConfigPath);
+            return;
+        }
+
+        Properties properties = new Properties();
+        properties.setProperty("lveditorDraftFilePath", lveditorDraftFilePath == null ? "" : lveditorDraftFilePath);
+        properties.setProperty("outPutFilePath", outPutFilePath == null ? "" : outPutFilePath);
+        properties.setProperty("isOpen", isOpen == true ? "true" : "false");
+        FileUtils.writePropertiesToFile(properties, windowsConfigPath);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "WindowsAppConfig{" +
+                "lveditorDraftFilePath='" + lveditorDraftFilePath + '\'' +
+                ", outPutFilePath='" + outPutFilePath + '\'' +
+                '}';
+    }
 }
