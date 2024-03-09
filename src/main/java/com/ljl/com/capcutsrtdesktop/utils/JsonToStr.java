@@ -20,6 +20,7 @@ public class JsonToStr
 {
 
     private final static String jsonName = "draft_content.json";
+    private final static String srtName = "draft_content.srt";
 
     public static void main(String[] args) throws IOException
     {
@@ -125,7 +126,7 @@ public class JsonToStr
                     .collect(Collectors.joining());
 
 
-            writeToFile(srtOut, outPutFile + "/" + "subtitles.srt");
+            writeToFile(srtOut, outPutFile + "/" + srtName);
             System.out.println("Run \"java MainApp --txt\" to get a copy version of the subtitles, courtesy of @dellucanil");
         } catch (Exception e)
         {
