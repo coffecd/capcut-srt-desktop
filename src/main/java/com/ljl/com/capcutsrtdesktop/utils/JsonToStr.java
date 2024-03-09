@@ -6,6 +6,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +57,7 @@ public class JsonToStr
         try
         {
             String draftFileName = draftFile + "/" + jsonName;
-            String data = new String(Files.readAllBytes(Paths.get(draftFileName)));
+            String data = new String(Files.readAllBytes(Paths.get(draftFileName)), StandardCharsets.UTF_8);
             JSONObject jsonData = JSON.parseObject(data);
             JSONArray materials = jsonData.getJSONArray("materials");
             JSONArray tracks = jsonData.getJSONArray("tracks");
@@ -136,7 +137,8 @@ public class JsonToStr
         } catch (Exception e)
         {
 //            e.printStackTrace();
-            return false;
+            AlertUtils.shoeErr("No subtitles found");
+            return true;
         }
 
         return true;
