@@ -129,15 +129,10 @@ public class HomeController implements Initializable
         String out = outPutFilePath.getText();
 
         boolean create = JsonToStr.generateStr(path, out, outPutSrtName.getText());
-        if (!create)
-        {
-            AlertUtils.shoeErr("生成失败!该视频没有生成字幕文件JSON");
-            return;
-        }
         if (create&&isOpenFile.isSelected())
         {
             FileUtils.openFile(out);
-        }else {
+        }else if (create){
             AlertUtils.shoeSuccess("生成成功");
         }
 

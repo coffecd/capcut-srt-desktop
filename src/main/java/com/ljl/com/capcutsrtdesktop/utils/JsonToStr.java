@@ -138,7 +138,7 @@ public class JsonToStr
         {
 //            e.printStackTrace();
             AlertUtils.shoeErr("No subtitles found");
-            return true;
+            return false;
         }
 
         return true;
@@ -184,10 +184,12 @@ public class JsonToStr
 
     private static void writeToFileCount(String data, String filename) throws IOException
     {
-//        System.out.println("Saving subtitles to file...");
+        // Split the filename into name and extension
+        String name = filename.substring(0, filename.lastIndexOf("."));
+        String extension = filename.substring(filename.lastIndexOf("."));
 
         // Create a Path for the filename
-        Path path = Paths.get(filename);
+        Path path = Paths.get(name + extension);
         int count = 0;
 
         // Check if file already exists
@@ -195,11 +197,10 @@ public class JsonToStr
         {
             // If file exists, add a number to the filename
             count++;
-            path = Paths.get(filename + count);
+            path = Paths.get(name + count + extension);
         }
 
         // Write the data to the file
         Files.write(path, data.getBytes());
-//        System.out.println("Done!");
     }
 }
