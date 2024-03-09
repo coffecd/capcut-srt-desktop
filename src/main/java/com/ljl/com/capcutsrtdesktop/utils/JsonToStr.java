@@ -7,6 +7,7 @@ import com.alibaba.fastjson2.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.stream.Collectors;
@@ -50,11 +51,11 @@ public class JsonToStr
      * @param outPutFile 输出的文件夹路径
      * @throws IOException
      */
-    public static void generateStr(String draftFile, String outPutFile)
+    public static boolean generateStr(String draftFile, String outPutFile)
     {
         try
         {
-            String draftFileName = draftFile+"/" + jsonName;
+            String draftFileName = draftFile + "/" + jsonName;
             String data = new String(Files.readAllBytes(Paths.get(draftFileName)));
             JSONObject jsonData = JSON.parseObject(data);
             JSONArray materials = jsonData.getJSONArray("materials");
@@ -126,13 +127,15 @@ public class JsonToStr
                     .collect(Collectors.joining());
 
 
-            writeToFile(srtOut, outPutFile + "/" + srtName);
+            writeToFileCount(srtOut, outPutFile + "/" + srtName);
             System.out.println("Run \"java MainApp --txt\" to get a copy version of the subtitles, courtesy of @dellucanil");
         } catch (Exception e)
         {
-            e.printStackTrace();
+//            e.printStackTrace();
+            return false;
         }
 
+        return true;
 
     }
 
@@ -168,8 +171,29 @@ public class JsonToStr
 
     private static void writeToFile(String data, String filename) throws IOException
     {
-        System.out.println("Saving subtitles to file...");
+//        System.out.println("Saving subtitles to file...");
         Files.write(Paths.get(filename), data.getBytes());
-        System.out.println("Done!");
+//        System.out.println("Done!");
+    }
+
+    private static void writeToFileCount(String data, String filename) throws IOException
+    {
+//        System.out.println("Saving subtitles to file...");
+
+        // Create a Path for the filename
+        Path path = Paths.get(filename);
+        int count = 0;
+
+        // Check if file already exists
+        while (Files.exists(path))
+        {
+            // If file exists, add a number to the filename
+            count++;
+            path = Paths.get(filename + count);
+        }
+
+        // Write the data to the file
+        Files.write(path, data.getBytes());
+//        System.out.println("Done!");
     }
 }
