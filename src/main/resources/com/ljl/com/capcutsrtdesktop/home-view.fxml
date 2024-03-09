@@ -10,15 +10,17 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="214.0" prefWidth="609.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ljl.com.capcutsrtdesktop.HomeController">
    <children>
       <Label layoutX="22.0" layoutY="23.0" prefHeight="26.0" prefWidth="110.0" text="CapCut项目地址" />
-      <Label layoutX="22.0" layoutY="73.0" prefHeight="26.0" prefWidth="100.0" text="STR 输出文件夹" />
+      <Label layoutX="22.0" layoutY="65.0" prefHeight="26.0" prefWidth="100.0" text="SRT 输出文件夹" />
       <TextField fx:id="projecteFilePaht" layoutX="132.0" layoutY="25.0" prefHeight="23.0" prefWidth="359.0" promptText="draft_content.json文件夹路径" />
-      <TextField fx:id="outPutFilePath" layoutX="132.0" layoutY="75.0" prefHeight="23.0" prefWidth="359.0" promptText="STR生成路径" />
+      <TextField fx:id="outPutFilePath" layoutX="132.0" layoutY="67.0" prefHeight="23.0" prefWidth="359.0" promptText="SRT生成路径" />
       <Button layoutX="501.0" layoutY="24.0" mnemonicParsing="false" onAction="#projecteFilePahtBtn" text="选择文件路径" />
-      <Button layoutX="502.0" layoutY="74.0" mnemonicParsing="false" onAction="#outPutFilePathBtn" text="选择文件路径" />
-      <Label layoutX="23.0" layoutY="124.0" prefHeight="26.0" prefWidth="100.0" text="选择项目" />
-      <ComboBox fx:id="selectProject" layoutX="132.0" layoutY="126.0" prefHeight="23.0" prefWidth="458.0" />
-      <Button layoutX="430.0" layoutY="170.0" mnemonicParsing="false" onAction="#refreshBtn" prefHeight="23.0" prefWidth="61.0" text="刷新" />
-      <Button layoutX="500.0" layoutY="170.0" mnemonicParsing="false" onAction="#creatStrBtn" prefHeight="23.0" prefWidth="88.0" text="生成STR字幕" />
-      <CheckBox fx:id="isOpenFile" layoutX="266.0" layoutY="174.0" mnemonicParsing="false" text="生成完成是否打开文件夹" />
+      <Button layoutX="502.0" layoutY="66.0" mnemonicParsing="false" onAction="#outPutFilePathBtn" text="选择文件路径" />
+      <Label layoutX="23.0" layoutY="136.0" prefHeight="26.0" prefWidth="100.0" text="选择项目" />
+      <ComboBox fx:id="selectProject" layoutX="132.0" layoutY="138.0" prefHeight="23.0" prefWidth="458.0" />
+      <Button layoutX="430.0" layoutY="180.0" mnemonicParsing="false" onAction="#refreshBtn" prefHeight="23.0" prefWidth="61.0" text="刷新" />
+      <Button layoutX="500.0" layoutY="180.0" mnemonicParsing="false" onAction="#creatStrBtn" prefHeight="23.0" prefWidth="88.0" text="生成STR字幕" />
+      <CheckBox fx:id="isOpenFile" layoutX="266.0" layoutY="184.0" mnemonicParsing="false" text="生成完成是否打开文件夹" />
+      <Label layoutX="22.0" layoutY="100.0" prefHeight="26.0" prefWidth="100.0" text="SRT 输入名称" />
+      <TextField fx:id="outPutSrtName" layoutX="131.0" layoutY="101.0" prefHeight="23.0" prefWidth="458.0" promptText="SRT生成的名字 可不填写" />
    </children>
 </AnchorPane>

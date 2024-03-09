@@ -34,6 +34,10 @@ public class HomeController implements Initializable
     @FXML
     private CheckBox isOpenFile;
 
+
+    @FXML
+    private TextField outPutSrtName;
+
     @FXML
     void outPutFilePathBtn(ActionEvent event)
     {
@@ -124,7 +128,7 @@ public class HomeController implements Initializable
         System.out.println("生成STR path:" + path);
         String out = outPutFilePath.getText();
 
-        boolean create = JsonToStr.generateStr(path, out);
+        boolean create = JsonToStr.generateStr(path, out, outPutSrtName.getText());
         if (!create)
         {
             AlertUtils.shoeErr("生成失败!该视频没有生成字幕文件JSON");

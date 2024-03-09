@@ -41,7 +41,7 @@ public class JsonToStr
 //                draftFileName = "draft_info.json";
 //        }
         System.out.println("file: " + draftFileName);
-        generateStr(draftFileName, uptFile);
+//        generateStr(draftFileName, uptFile);
     }
 
     /**
@@ -51,7 +51,7 @@ public class JsonToStr
      * @param outPutFile 输出的文件夹路径
      * @throws IOException
      */
-    public static boolean generateStr(String draftFile, String outPutFile)
+    public static boolean generateStr(String draftFile, String outPutFile,String outSrtName)
     {
         try
         {
@@ -126,8 +126,12 @@ public class JsonToStr
                     .map(s -> ((JSONObject) s).getString("content") + "\n")
                     .collect(Collectors.joining());
 
-
-            writeToFileCount(srtOut, outPutFile + "/" + srtName);
+            String outName=srtName;
+            if (outSrtName!=null && !outSrtName.isEmpty())
+            {
+                outName=outSrtName+".srt";
+            }
+            writeToFileCount(srtOut, outPutFile + "/" + outName);
             System.out.println("Run \"java MainApp --txt\" to get a copy version of the subtitles, courtesy of @dellucanil");
         } catch (Exception e)
         {
