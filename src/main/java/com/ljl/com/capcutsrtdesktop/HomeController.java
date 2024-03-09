@@ -127,7 +127,7 @@ public class HomeController implements Initializable
         JsonToStr.generateStr(path, out);
         if (isOpenFile.isSelected())
         {
-            FileUtils.openFile(path);
+            FileUtils.openFile(out);
             return;
         }
         AlertUtils.shoeSuccess("生成成功");
