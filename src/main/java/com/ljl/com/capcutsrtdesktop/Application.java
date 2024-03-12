@@ -40,7 +40,7 @@ public class Application extends javafx.application.Application
             stage.setY(evt.getScreenY() - y);
         });
 
-        stage.setTitle("capcut-srt-desktop");
+        stage.setTitle("capcut-srt-desktop https://github.com/coffecd");
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon/log.png")));
         // 禁止窗口最大化
         stage.setScene(scene);
