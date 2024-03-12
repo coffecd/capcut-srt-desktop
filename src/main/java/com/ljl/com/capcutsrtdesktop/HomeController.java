@@ -109,7 +109,7 @@ public class HomeController implements Initializable
     void refreshBtn(ActionEvent event)
     {
         initProject();
-        AlertUtils.shoeSuccess("刷新完成！");
+        AlertUtils.shoeSuccess("项目刷新完成！");
     }
 
     /**
