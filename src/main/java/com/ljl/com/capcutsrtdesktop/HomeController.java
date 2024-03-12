@@ -7,7 +7,6 @@ import com.ljl.com.capcutsrtdesktop.utils.JsonToStr;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -134,6 +133,7 @@ public class HomeController implements Initializable
             FileUtils.openFile(out);
         }else if (create){
             AlertUtils.shoeSuccess("生成成功");
+
         }
 
     }
